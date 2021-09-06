@@ -97,6 +97,12 @@ public class TemperatureServiceTest extends TemperatureFetcherApplicationTests {
         }
     }
 
+    /**
+     * 测试TPS超限
+     *
+     * @throws InterruptedException InterruptedException
+     * @throws ExecutionException   ExecutionException
+     */
     @Test
     public void testGetTemperatureTPSLimit() throws InterruptedException, ExecutionException {
         String province = "江苏";
@@ -109,6 +115,7 @@ public class TemperatureServiceTest extends TemperatureFetcherApplicationTests {
         ExecutorService pool = new ThreadPoolExecutor(threadCount, threadCount, 0L, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<Runnable>(100), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
 
+        // 使用多线程模拟1秒内超过TPS限制的请求
         List<Callable<Integer>> allTasks = new ArrayList<>(threadCount);
         for (int i = 0; i < threadCount; i++) {
             allTasks.add((Callable) () -> temperatureService.getTemperature(province, city, county).get());
